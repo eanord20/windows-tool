@@ -1,0 +1,500 @@
+<Window x:Class="NSPdfMerge.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:NSPdfMerge.App.ViewModels"
+        xmlns:conv="clr-namespace:NSPdfMerge.App.Converters"
+        xmlns:loc="clr-namespace:NSPdfMerge.App.Services"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=WindowTitle}" Height="720" Width="1200" WindowState="Maximized">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveListCommand}" />
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenListCommand}" />
+    </Window.InputBindings>
+
+    <Window.Resources>
+        <conv:RowIndexConverter x:Key="RowIndexConverter" />
+        <SolidColorBrush x:Key="NotFoundRowBrush" Color="#F7C7AC" />
+        <SolidColorBrush x:Key="DuplicateRowBrush" Color="#FFF7DC" />
+        <SolidColorBrush x:Key="DuplicateBadgeBackground" Color="#FFF7DC" />
+        <SolidColorBrush x:Key="DuplicateBadgeBorder" Color="#E0C080" />
+
+        <ControlTemplate x:Key="CompactMenuItemTemplate" TargetType="MenuItem">
+            <Grid SnapsToDevicePixels="True">
+                <Border x:Name="templateRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        SnapsToDevicePixels="True">
+                    <ContentPresenter ContentSource="Header"
+                                      RecognizesAccessKey="True"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                </Border>
+                <Popup x:Name="PART_Popup"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                       Placement="Bottom"
+                       PopupAnimation="Fade"
+                       VerticalOffset="-1"
+                       HorizontalOffset="-1">
+                    <Border BorderBrush="{DynamicResource MaterialDesignDivider}"
+                            BorderThickness="1"
+                            Background="{DynamicResource MaterialDesignPaper}"
+                            MinWidth="180"
+                            SnapsToDevicePixels="True">
+                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"
+                                        Grid.IsSharedSizeScope="True"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        KeyboardNavigation.TabNavigation="Cycle"
+                                        Margin="0"/>
+                    </Border>
+                </Popup>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter TargetName="PART_Popup" Property="Placement" Value="Right"/>
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter TargetName="PART_Popup" Property="Visibility" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuItem">
+                    <Setter TargetName="PART_Popup" Property="Visibility" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource MaterialDesignCardBackground}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignDisabled}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="CompactMenuItemStyle" TargetType="MenuItem" BasedOn="{StaticResource MaterialDesignMenuItem}">
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Height" Value="27" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Template" Value="{StaticResource CompactMenuItemTemplate}" />
+            <Style.Triggers>
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Margin" Value="0,0,12,0" />
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Margin" Value="0,0,12,0" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="MinHeight" Value="24" />
+        </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="10,3" />
+        </Style>
+
+        <Style x:Key="PrimaryRaisedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="10,4" />
+        </Style>
+
+        <Style x:Key="SmallOutlinedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="8,2" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Background="{DynamicResource MaterialDesignPaper}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="12" Padding="0" Height="27"
+              ItemContainerStyle="{StaticResource CompactMenuItemStyle}">
+            <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuFile}">
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuSaveList}" Command="{Binding SaveListCommand}" />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuOpenList}" Command="{Binding OpenListCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuSaveSearchPreset}" Command="{Binding SaveSearchPresetCommand}" />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuSaveOutputPreset}" Command="{Binding SaveOutputPresetCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuSearchPresets}" ItemsSource="{Binding SearchPathPresets}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource CompactMenuItemStyle}">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="ToolTip" Value="{Binding SearchPath}" />
+                            <Setter Property="Command" Value="{Binding DataContext.ApplySearchPresetCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="CommandParameter" Value="{Binding}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuOutputPresets}" ItemsSource="{Binding OutputPathPresets}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource CompactMenuItemStyle}">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="ToolTip" Value="{Binding OutputPath}" />
+                            <Setter Property="Command" Value="{Binding DataContext.ApplyOutputPresetCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="CommandParameter" Value="{Binding}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuEditPresets}" Command="{Binding EditPresetsCommand}" />
+            </MenuItem>
+            <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuTheme}">
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuDarkTheme}" IsCheckable="True" IsChecked="{Binding IsDarkTheme}" />
+            </MenuItem>
+            <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuHelp}">
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuInstruction}" Command="{Binding InstructionCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuAbout}" Command="{Binding AboutCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuLanguage}">
+                    <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LangRussian}" Command="{Binding SetLanguageCommand}" CommandParameter="ru" />
+                    <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LangEnglish}" Command="{Binding SetLanguageCommand}" CommandParameter="en" />
+                    <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LangUkrainian}" Command="{Binding SetLanguageCommand}" CommandParameter="uk" />
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <!-- Top: paths + actions -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="6" Padding="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelSearchPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="13" />
+                        <TextBox Grid.Column="2" Text="{Binding CommonSearchPath, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Grid.Column="4" MinWidth="110" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}" Command="{Binding BrowseCommonSearchPathCommand}" />
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelOutputPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="13" />
+                        <TextBox Grid.Column="2" Text="{Binding OutputPdfPath, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Grid.Column="4" MinWidth="110" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}" Command="{Binding BrowseOutputPdfPathCommand}" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="6" Padding="8">
+                <Grid MinWidth="400">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Row="0" Grid.Column="0" MinWidth="190" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonPasteClipboard}" Command="{Binding PasteFromClipboardCommand}" />
+                    <Button Grid.Row="0" Grid.Column="2" MinWidth="190" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonPasteExcel}" Command="{Binding ImportFromExcelFileCommand}" />
+
+                    <Button Grid.Row="2" Grid.Column="0" MinWidth="190" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonFindFiles}" Command="{Binding ResolveFilesCommand}" />
+                    <Button Grid.Row="2" Grid.Column="2" MinWidth="190" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonMergePdf}" Command="{Binding MergePdfCommand}" Style="{StaticResource PrimaryRaisedButton}" />
+                    <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" MinWidth="400" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonClear}" Command="{Binding ClearTableCommand}" Style="{StaticResource SmallOutlinedButton}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Stats bar -->
+        <Border Grid.Row="4" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="6" Padding="8,4">
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatTotal}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,16,0" Text="{Binding TotalCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatIncluded}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,16,0" Text="{Binding IncludedCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatFound}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,16,0" Text="{Binding FoundCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatNotFound}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,16,0" Text="{Binding NotFoundCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatAmbiguous}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,16,0" Text="{Binding AmbiguousCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatPending}" Foreground="{DynamicResource MaterialDesignBody}" />
+                <TextBlock DockPanel.Dock="Left" Margin="6,0,0,0" Text="{Binding PendingCount}" Foreground="{DynamicResource MaterialDesignBody}" />
+            </DockPanel>
+        </Border>
+
+        <!-- Main: grid -->
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="6" Padding="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,8">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                            <Button Margin="0,0,8,0" Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarUndo}" Command="{Binding UndoCommand}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="UndoVariant" Width="18" Height="18" />
+                            </Button>
+                            <Button Margin="0,0,8,0" Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarUp}" Command="{Binding MoveUpCommand}" CommandParameter="{Binding SelectedItems, ElementName=RowsGrid}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="ArrowUp" Width="18" Height="18" />
+                            </Button>
+                            <Button Margin="0,0,16,0" Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarDown}" Command="{Binding MoveDownCommand}" CommandParameter="{Binding SelectedItems, ElementName=RowsGrid}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="ArrowDown" Width="18" Height="18" />
+                            </Button>
+
+                            <Button Margin="0,0,8,0" Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarAdd}" Command="{Binding AddRowCommand}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" />
+                            </Button>
+                            <Button Margin="0,0,8,0" Width="180" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarSelectManually}" Command="{Binding SelectFileManuallyCommand}" CommandParameter="{Binding SelectedRow}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="FolderOpen" Width="18" Height="18" />
+                            </Button>
+                            <Button Margin="0,0,8,0" Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarDelete}" Command="{Binding DeleteSelectedRowsCommand}" CommandParameter="{Binding SelectedItems, ElementName=RowsGrid}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="Delete" Width="18" Height="18" />
+                            </Button>
+                            <Button Margin="0,0,8,0" Width="180" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarDeleteDuplicates}" Command="{Binding DeleteDuplicatesCommand}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="ContentDuplicate" Width="18" Height="18" />
+                            </Button>
+                            <Button Width="30" ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ToolbarOpen}" Command="{Binding OpenPdfCommand}" CommandParameter="{Binding SelectedRow}" Style="{StaticResource SmallOutlinedButton}">
+                                <materialDesign:PackIcon Kind="OpenInNew" Width="18" Height="18" />
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DataGrid Grid.Row="1"
+                              x:Name="RowsGrid"
+                              ItemsSource="{Binding Rows}"
+                              SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              SelectionMode="Extended"
+                              HeadersVisibility="Column"
+                              Background="{DynamicResource MaterialDesignPaper}"
+                              Foreground="{DynamicResource TableForegroundBrush}"
+                              GridLinesVisibility="All"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              ClipboardCopyMode="IncludeHeader"
+                              AllowDrop="True"
+                              PreviewMouseLeftButtonDown="RowsGrid_PreviewMouseLeftButtonDown"
+                              PreviewMouseMove="RowsGrid_PreviewMouseMove"
+                              PreviewMouseRightButtonDown="RowsGrid_PreviewMouseRightButtonDown"
+                              PreviewKeyDown="RowsGrid_PreviewKeyDown"
+                              DragOver="RowsGrid_DragOver"
+                              Drop="RowsGrid_Drop"
+                              RowBackground="{DynamicResource MaterialDesignPaper}"
+                              AlternatingRowBackground="{DynamicResource MaterialDesignCardBackground}"
+                              FontSize="15"
+                              BorderThickness="0">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TableForegroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter Property="Padding" Value="8,6" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                        </Style>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
+                            <Setter Property="BorderThickness" Value="0.5" />
+                            <Setter Property="Padding" Value="4,1" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDuplicate}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource DuplicateRowBrush}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="NotFound">
+                                    <Setter Property="Background" Value="{StaticResource NotFoundRowBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="MinHeight" Value="26" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ContextCopy}"
+                                                  Command="{Binding DataContext.CopyToClipboardCommand, Source={x:Reference RowsGrid}}"
+                                                  CommandParameter="{Binding SelectedItems, Source={x:Reference RowsGrid}}" />
+                                        <Separator />
+                                        <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ContextSelectManually}"
+                                                  Command="{Binding DataContext.SelectFileManuallyCommand, Source={x:Reference RowsGrid}}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ContextDelete}"
+                                                  Command="{Binding DataContext.DeleteSelectedRowsCommand, Source={x:Reference RowsGrid}}"
+                                                  CommandParameter="{Binding SelectedItems, Source={x:Reference RowsGrid}}" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDuplicate}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource DuplicateRowBrush}" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="NotFound">
+                                    <Setter Property="Background" Value="{StaticResource NotFoundRowBrush}" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnRowIndex}" Width="40" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource RowIndexConverter}, ConverterParameter={x:Reference RowsGrid}}" HorizontalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridCheckBoxColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnInclude}" Binding="{Binding Include, Mode=TwoWay}" Width="40" />
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnPartNumber}" Width="320">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             BorderThickness="0" Background="Transparent" Padding="2,0" FontSize="14"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnTitle}" Width="320">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             BorderThickness="0" Background="Transparent" Padding="2,0" FontSize="14"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="70" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="DupBadge" CornerRadius="10" Padding="8,2" Background="{StaticResource DuplicateBadgeBackground}" BorderBrush="{StaticResource DuplicateBadgeBorder}" BorderThickness="1">
+                                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=DupBadge}" FontWeight="Bold" Foreground="Black" />
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsDuplicate}" Value="False">
+                                            <Setter TargetName="DupBadge" Property="UIElement.Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnResolved}" Width="*" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ResolvedPath}" IsReadOnly="True"
+                                             BorderThickness="0" Background="Transparent" Padding="2,0" FontSize="14"
+                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnStatus}" Width="70" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="False">
+                                        <Border DockPanel.Dock="Left" CornerRadius="10" Padding="8,2" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" ToolTip="{Binding ResolvedPath}">
+                                            <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TableForegroundBrush}" />
+                                        </Border>
+                                        <Button DockPanel.Dock="Right"
+                                                Margin="8,0,0,0"
+                                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}"
+                                                Command="{Binding DataContext.SelectAmbiguousFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource SmallOutlinedButton}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Setter Property="IsEnabled" Value="True" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CandidatesCount}" Value="0">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+        <!-- Output status bar -->
+        <Border Grid.Row="8" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="6" Padding="8,4">
+            <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatusResult}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource MaterialDesignBody}" />
+                <Button DockPanel.Dock="Right" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=StatusOpen}" Command="{Binding OpenPdfCommand}" CommandParameter="{Binding LastOutputPath}" Style="{StaticResource SmallOutlinedButton}" />
+                <TextBlock Text="{Binding LastOutputPath}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding LastOutputPath}" Foreground="{DynamicResource MaterialDesignBody}" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

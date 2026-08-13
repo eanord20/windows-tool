@@ -1,0 +1,26 @@
+<Window x:Class="NSPdfMerge.App.InstructionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Инструкция" Width="720" Height="420"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <TextBlock TextWrapping="Wrap"
+                       FontSize="14"
+                       Text="{Binding}" />
+        </ScrollViewer>
+
+        <Button Grid.Row="2"
+                Width="110"
+                HorizontalAlignment="Right"
+                IsDefault="True"
+                Content="OK"
+                Click="Ok_Click" />
+    </Grid>
+</Window>

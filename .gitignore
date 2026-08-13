@@ -1,0 +1,46 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+publish/
+
+# NuGet
+packages/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Installer outputs
+installer_output/
+
+# Certificates / signing keys
+*.pfx
+*.snk
+
+# Build caches
+*.cache
+
+# Devin local config
+.devin/config.local.json
+
+# Unused prototype UI
+pdf-generation-interface/
+
+# Unused/old assets
+sn_pdf_merge_icon.ico
+ChatGPT*.png
+
+# Local scratch / notes
+*.txt
