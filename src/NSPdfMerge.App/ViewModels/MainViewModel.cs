@@ -347,8 +347,32 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
 
         UpdateDuplicates();
+        RecalcRowNumbers(GetRecalcStartIndex(e));
         RaiseCountersChanged();
         RaiseCommandStates();
+    }
+
+    private int GetRecalcStartIndex(NotifyCollectionChangedEventArgs e)
+    {
+        return e.Action switch
+        {
+            NotifyCollectionChangedAction.Add => e.NewStartingIndex,
+            NotifyCollectionChangedAction.Remove => e.OldStartingIndex,
+            NotifyCollectionChangedAction.Move => Math.Min(e.OldStartingIndex, e.NewStartingIndex),
+            NotifyCollectionChangedAction.Replace => Math.Min(e.OldStartingIndex, e.NewStartingIndex),
+            _ => 0
+        };
+    }
+
+    private void RecalcRowNumbers(int startIndex)
+    {
+        if (startIndex < 0) startIndex = 0;
+        for (int i = startIndex; i < Rows.Count; i++)
+        {
+            var expected = i + 1;
+            if (Rows[i].RowNumber != expected)
+                Rows[i].RowNumber = expected;
+        }
     }
 
     private void Row_PropertyChanged(object? sender, PropertyChangedEventArgs e)

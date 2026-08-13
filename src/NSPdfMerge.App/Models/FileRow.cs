@@ -16,6 +16,7 @@ public sealed class FileRow : INotifyPropertyChanged
     private int _candidatesCount;
     private bool _isDuplicate;
     private bool _isManuallyResolved;
+    private int _rowNumber;
 
     public bool Include
     {
@@ -114,6 +115,17 @@ public sealed class FileRow : INotifyPropertyChanged
         {
             if (value == _isManuallyResolved) return;
             _isManuallyResolved = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int RowNumber
+    {
+        get => _rowNumber;
+        set
+        {
+            if (value == _rowNumber) return;
+            _rowNumber = value;
             OnPropertyChanged();
         }
     }

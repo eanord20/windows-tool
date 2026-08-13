@@ -20,6 +20,18 @@ public partial class MainWindow : Window
     private void RowsGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         _dragStartPoint = e.GetPosition(null);
+
+        if (sender is not DataGrid dataGrid) return;
+        if (e.OriginalSource is System.Windows.Controls.TextBox) return;
+
+        var row = FindVisualParent<DataGridRow>((DependencyObject)e.OriginalSource);
+        if (row?.Item is not FileRow rowData) return;
+
+        // Preserve multi-selection when starting a drag on an already selected row.
+        if (dataGrid.SelectedItems.Count > 1 && dataGrid.SelectedItems.Contains(rowData))
+        {
+            e.Handled = true;
+        }
     }
 
     private void RowsGrid_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -104,6 +116,12 @@ public partial class MainWindow : Window
             vm.Rows.Insert(insertIndex++, row);
         }
 
+        // Keep the moved rows selected so the user can continue operating on them.
+        dataGrid.SelectedItems.Clear();
+        foreach (var row in ascending)
+        {
+            dataGrid.SelectedItems.Add(row);
+        }
         vm.SelectedRow = ascending.FirstOrDefault();
     }
 

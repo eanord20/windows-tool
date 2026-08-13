@@ -354,7 +354,7 @@
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
                         </Style>
-                        <Style TargetType="DataGridCell">
+                        <Style TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
                             <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
                             <Setter Property="BorderThickness" Value="0.5" />
                             <Setter Property="Padding" Value="4,1" />
@@ -368,7 +368,7 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                        <Style TargetType="DataGridRow">
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
                             <Setter Property="MinHeight" Value="26" />
                             <Setter Property="ContextMenu">
                                 <Setter.Value>
@@ -403,7 +403,7 @@
                         <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnRowIndex}" Width="40" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource RowIndexConverter}, ConverterParameter={x:Reference RowsGrid}}" HorizontalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                                    <TextBlock Text="{Binding RowNumber}" HorizontalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
