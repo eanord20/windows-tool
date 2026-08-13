@@ -57,12 +57,19 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private bool CanSelectAmbiguousFile(object? parameter)
     {
-        return parameter is FileRow row && row.Status == ResolveStatus.Ambiguous;
+        var can = parameter is FileRow row && row.Status == ResolveStatus.Ambiguous;
+        AppLog.Info($"CanSelectAmbiguousFile: type={parameter?.GetType().Name}, can={can}");
+        return can;
     }
 
     private void SelectAmbiguousFile(object? parameter)
     {
-        if (parameter is not FileRow row) return;
+        AppLog.Info($"SelectAmbiguousFile started. Parameter type={parameter?.GetType().Name}");
+        if (parameter is not FileRow row)
+        {
+            AppLog.Info("SelectAmbiguousFile: parameter is not FileRow");
+            return;
+        }
 
         var candidates = row.Candidates;
         if (candidates.Count == 0)
@@ -76,6 +83,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             .ToList();
 
         row.Candidates = candidates;
+        AppLog.Info($"SelectAmbiguousFile for row {row.RowNumber}: candidates={candidates.Count}");
         if (candidates.Count == 0)
         {
             AppendLog($"[{row.Number}] Ambiguous: список кандидатов пуст.\r\n");
@@ -83,14 +91,26 @@ public sealed class MainViewModel : INotifyPropertyChanged
             return;
         }
 
-        var wnd = new NSPdfMerge.App.AmbiguousSelectWindow(candidates)
+        NSPdfMerge.App.AmbiguousSelectWindow? wnd = null;
+        bool? ok = null;
+        try
         {
-            Owner = System.Windows.Application.Current.MainWindow
-        };
-        var ok = wnd.ShowDialog();
+            wnd = new NSPdfMerge.App.AmbiguousSelectWindow(candidates)
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+            AppLog.Info($"SelectAmbiguousFile: showing AmbiguousSelectWindow with {candidates.Count} candidates");
+            ok = wnd.ShowDialog();
+            AppLog.Info($"SelectAmbiguousFile: dialog result={ok}");
+        }
+        catch (Exception ex)
+        {
+            AppLog.Error("SelectAmbiguousFile: failed to show dialog", ex);
+            throw;
+        }
         if (ok != true) return;
 
-        var selected = wnd.SelectedPath;
+        var selected = wnd?.SelectedPath;
         if (string.IsNullOrWhiteSpace(selected))
         {
             System.Windows.MessageBox.Show("Файл не выбран.", "Выбор файла", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);

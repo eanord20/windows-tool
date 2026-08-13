@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using NSPdfMerge.App.Models;
+using NSPdfMerge.App.Services;
 using NSPdfMerge.App.ViewModels;
 
 namespace NSPdfMerge.App;
@@ -22,7 +23,14 @@ public partial class MainWindow : Window
         _dragStartPoint = e.GetPosition(null);
 
         if (sender is not DataGrid dataGrid) return;
-        if (IsInsideInteractiveControl((DependencyObject)e.OriginalSource)) return;
+        if (IsInsideInteractiveControl((DependencyObject)e.OriginalSource))
+        {
+            if (FindVisualParent<System.Windows.Controls.Button>((DependencyObject)e.OriginalSource) is not null)
+            {
+                AppLog.Info("PreviewMouseLeftButtonDown: click inside button, ignoring drag logic");
+            }
+            return;
+        }
 
         var row = FindVisualParent<DataGridRow>((DependencyObject)e.OriginalSource);
         if (row?.Item is not FileRow rowData) return;
@@ -207,6 +215,25 @@ public partial class MainWindow : Window
 
         vm.SelectedRow = vm.Rows.LastOrDefault();
         vm.AppendLog($"Добавлено файлов из проводника: {pdfFiles.Count}\r\n");
+    }
+
+    private void AmbiguousButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button button) return;
+        if (button.DataContext is not FileRow row) return;
+        if (DataContext is not MainViewModel vm) return;
+
+        AppLog.Info($"Ambiguous button clicked: RowNumber={row.RowNumber}, Number={row.Number}, Status={row.Status}, CandidatesCount={row.CandidatesCount}");
+
+        if (vm.SelectAmbiguousFileCommand.CanExecute(row))
+        {
+            vm.SelectAmbiguousFileCommand.Execute(row);
+            AppLog.Info("SelectAmbiguousFileCommand executed from AmbiguousButton_Click");
+        }
+        else
+        {
+            AppLog.Info($"SelectAmbiguousFileCommand cannot execute for row {row.RowNumber}");
+        }
     }
 
     private static bool IsInsideInteractiveControl(DependencyObject source)
