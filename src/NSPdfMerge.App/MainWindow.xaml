@@ -214,8 +214,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelSearchPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="13" />
-                        <TextBox Grid.Column="2" Text="{Binding CommonSearchPath, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelSearchPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="15" />
+                        <TextBox Grid.Column="2" Text="{Binding CommonSearchPath, UpdateSourceTrigger=PropertyChanged}" FontSize="14" VerticalContentAlignment="Center" />
                         <Button Grid.Column="4" MinWidth="110" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}" Command="{Binding BrowseCommonSearchPathCommand}" />
                     </Grid>
 
@@ -228,8 +228,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelOutputPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="13" />
-                        <TextBox Grid.Column="2" Text="{Binding OutputPdfPath, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=LabelOutputPath}" Foreground="{DynamicResource MaterialDesignBody}" FontSize="15" />
+                        <TextBox Grid.Column="2" Text="{Binding OutputPdfPath, UpdateSourceTrigger=PropertyChanged}" FontSize="14" VerticalContentAlignment="Center" />
                         <Button Grid.Column="4" MinWidth="110" Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}" Command="{Binding BrowseOutputPdfPathCommand}" />
                     </Grid>
                 </Grid>
