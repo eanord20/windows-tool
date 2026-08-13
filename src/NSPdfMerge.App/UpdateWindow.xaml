@@ -28,13 +28,13 @@
                    Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=UpdateWindowTitle}" />
 
         <TextBlock Grid.Row="1" Margin="0,8,0,0" FontSize="14">
-            <Run Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=UpdateCurrentVersion}" />
-            <Run Text="{Binding CurrentVersion}" />
+            <Run Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=UpdateCurrentVersion, Mode=OneWay}" />
+            <Run Text="{Binding CurrentVersion, Mode=OneWay}" />
         </TextBlock>
 
         <TextBlock Grid.Row="2" Margin="0,4,0,0" FontSize="14">
-            <Run Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=UpdateLatestVersion}" />
-            <Run Text="{Binding LatestVersion}" />
+            <Run Text="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=UpdateLatestVersion, Mode=OneWay}" />
+            <Run Text="{Binding LatestVersion, Mode=OneWay}" />
         </TextBlock>
 
         <TextBlock Grid.Row="3" Margin="0,8,0,0" FontSize="14"
