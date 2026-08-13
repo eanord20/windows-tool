@@ -16,21 +16,24 @@ public static class AppInfo
     }
 
     public static string Changelog { get; } =
-        "Что нового в версии 1.2.0:\r\n" +
-        "• Меню единого стиля: равная высота и ширина выпадающих списков\r\n" +
-        "• Пресеты разделены на поиск и сохранение, размещены в меню Файл\r\n" +
-        "• Пресеты хранятся в отдельном presets.json и редактируются через Файл → Редактировать пресеты\r\n" +
-        "• Имя пресета по умолчанию берётся из полного пути\r\n" +
-        "• Текст таблицы в тёмной теме вынесен в #F0F0F0, бейдж Дубль — тёмный на жёлтом\r\n" +
-        "• Компактный верхний блок и меню\r\n" +
-        "• Подсветка строк NotFound (#F7C7AC) и дубликатов (#FFF7DC)\r\n" +
-        "• Excel-подобное выделение текста и копирование ячеек\r\n" +
-        "• Сохранение ручного выбора файла при сборке PDF\r\n" +
-        "• Отмена последнего действия (Ctrl+Z)\r\n" +
-        "• Множественное перетаскивание строк\r\n" +
-        "• Строка состояния с путём к собранному PDF\r\n" +
-        "• Кнопка «Открыть» в верхней панели\r\n" +
-        "• Удаление дублей с конца списка\r\n" +
-        "• Порядковый номер строки (№) в таблице\r\n" +
-        "• Локализация интерфейса (RU / EN / UK)\r\n";
+        "What's new in version 1.2.2:\r\n" +
+        "• Built-in auto-updater: check for updates and install from GitHub Releases\r\n" +
+        "• New Help → Update window with changelog and update controls\r\n\r\n" +
+        "What's new in version 1.2.0:\r\n" +
+        "• Unified menu style: equal height and width for drop-down lists\r\n" +
+        "• Presets split into search and save, placed under the File menu\r\n" +
+        "• Presets stored in a separate presets.json and edited via File → Edit presets\r\n" +
+        "• Default preset name is taken from the full path\r\n" +
+        "• Dark theme table text set to #F0F0F0, Duplicate badge uses dark text on yellow\r\n" +
+        "• Compact top block and menu\r\n" +
+        "• Highlight for NotFound rows (#F7C7AC) and duplicates (#FFF7DC)\r\n" +
+        "• Excel-like text selection and cell copying\r\n" +
+        "• Keep manual file selection when building PDF\r\n" +
+        "• Undo last action (Ctrl+Z)\r\n" +
+        "• Multi-row drag and drop\r\n" +
+        "• Status bar showing the path to the merged PDF\r\n" +
+        "• Open button in the top toolbar\r\n" +
+        "• Remove duplicates from the end of the list\r\n" +
+        "• Row number (№) column in the table\r\n" +
+        "• Interface localization (RU / EN / UK)\r\n";
 }
