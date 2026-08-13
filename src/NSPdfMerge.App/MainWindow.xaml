@@ -26,6 +26,7 @@
         <SolidColorBrush x:Key="NotFoundRowBrush" Color="#F7C7AC" />
         <SolidColorBrush x:Key="DuplicateRowBrush" Color="#FFF7DC" />
         <SolidColorBrush x:Key="AmbiguousRowBrush" Color="#C3E0E5" />
+        <SolidColorBrush x:Key="AmbiguousBadgeBackground" Color="#3498DB" />
         <SolidColorBrush x:Key="DuplicateBadgeBackground" Color="#FFF7DC" />
         <SolidColorBrush x:Key="DuplicateBadgeBorder" Color="#E0C080" />
 
@@ -456,11 +457,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <DockPanel LastChildFill="False">
-                                        <Border DockPanel.Dock="Left" CornerRadius="10" Padding="8,2" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" ToolTip="{Binding ResolvedPath}" MouseLeftButtonUp="AmbiguousStatusBorder_MouseLeftButtonUp">
+                                        <Border DockPanel.Dock="Left" CornerRadius="10" Padding="8,2" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" ToolTip="{Binding ResolvedPath}" MouseLeftButtonUp="AmbiguousStatusBorder_MouseLeftButtonUp">
                                             <Border.Style>
                                                 <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.Ambiguous}">
+                                                            <Setter Property="Background" Value="{StaticResource AmbiguousBadgeBackground}" />
                                                             <Setter Property="Cursor" Value="Hand" />
                                                             <Setter Property="ToolTip" Value="Нажмите, чтобы выбрать файл из нескольких вариантов" />
                                                         </DataTrigger>
