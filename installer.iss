@@ -13,7 +13,7 @@ WizardStyle=modern
 PrivilegesRequired=admin
 
 [Files]
-Source: "src\NSPdfMerge.App\bin\Debug\net8.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "src\NSPdfMerge.App\bin\Release\net8.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\NS PDF Merge"; Filename: "{app}\NSPdfMerge.exe"; IconFilename: "{app}\NSPdfMerge.exe"
