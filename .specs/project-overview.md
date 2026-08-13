@@ -71,6 +71,56 @@ D:\My_project\NS_PDF_Merge
 
 `1.2.0` — см. `About` / `installer.iss`.
 
+## Выпуск релизов и автообновление (запланировано)
+
+Распространение обновлений будет происходить через **GitHub Releases** репозитория `eanord20/windows-tool`.
+
+### Формат релиза
+
+- Тег релиза: `v{Major}.{Minor}.{Patch}`, например `v1.2.1`.
+- Имя ассета (прикреплённого файла): `NSPdfMerge_Setup.exe`.
+- Текущая версия приложения задаётся в `src/NSPdfMerge.App/NSPdfMerge.App.csproj` и дублируется в `installer.iss`.
+
+### Подготовка установщика
+
+1. Собрать приложение в конфигурации Release:
+   ```bash
+   dotnet build -c Release src/NSPdfMerge.App/NSPdfMerge.App.csproj
+   ```
+2. Собрать установщик Inno Setup:
+   ```bash
+   iscc installer.iss
+   ```
+   Результат: `installer_output/NSPdfMerge_Setup.exe`.
+
+### Публикация релиза
+
+**Вручную (через веб-интерфейс GitHub):**
+1. Открыть `github.com/eanord20/windows-tool/releases`.
+2. Нажать **Draft a new release**.
+3. В поле **Choose a tag** ввести `v1.2.1` и создать тег.
+4. Заголовок: `v1.2.1`.
+5. Прикрепить `NSPdfMerge_Setup.exe` в разделе Attach binaries.
+6. Опубликовать релиз.
+
+**Через терминал (`gh` CLI):**
+```bash
+gh release create v1.2.1 --title "v1.2.1" --generate-notes installer_output/NSPdfMerge_Setup.exe
+```
+Требуется авторизация: `gh auth login`.
+
+**Автоматизация через GitHub Actions (опционально):**
+Можно добавить workflow, который при пуше тега `v*` собирает Release, запускает `iscc` и публикует ассет. Это исключает ручные ошибки при сборке.
+
+### Принцип будущего автообновления
+
+- Приложение запрашивает `https://api.github.com/repos/eanord20/windows-tool/releases/latest`.
+- Сравнивает тег релиза с текущей `AssemblyVersion`.
+- Если тег новее, скачивает `NSPdfMerge_Setup.exe` во временную папку и запускает его с флагом `/SILENT`.
+- Установщик Inno Setup заменяет файлы приложения; текущий процесс завершаётся перед запуском установщика.
+
+> Реализация UI и сервиса автообновления отложена; согласован формат релиза и имя ассета — `NSPdfMerge_Setup.exe`.
+
 ## Известные технические ограничения
 
 - `MainWindow.xaml` содержит большую часть стилей и шаблонов ячеек — при дальнейшем росте UI рекомендуется выносить ресурсы в отдельные файлы.
