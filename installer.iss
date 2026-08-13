@@ -1,6 +1,6 @@
 [Setup]
 AppName=NS PDF Merge
-AppVersion=1.2.0
+AppVersion=1.2.2
 DefaultDirName={autopf}\NSPdfMerge
 DefaultGroupName=NS PDF Merge
 OutputDir=installer_output
