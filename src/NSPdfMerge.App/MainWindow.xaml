@@ -177,6 +177,7 @@
             </MenuItem>
             <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuHelp}">
                 <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuInstruction}" Command="{Binding InstructionCommand}" />
+                <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuUpdate}" Command="{Binding UpdateCommand}" />
                 <Separator />
                 <MenuItem Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=MenuAbout}" Command="{Binding AboutCommand}" />
                 <Separator />

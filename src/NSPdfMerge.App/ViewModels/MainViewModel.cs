@@ -237,6 +237,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public ICommand OpenPdfCommand { get; }
     public ICommand AboutCommand { get; }
     public ICommand InstructionCommand { get; }
+    public ICommand UpdateCommand { get; }
     public ICommand SelectAmbiguousFileCommand { get; }
     public ICommand SelectFileManuallyCommand { get; }
     public ICommand UndoCommand { get; }
@@ -281,6 +282,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OpenPdfCommand = new RelayCommand(OpenPdf, CanOpenPdf);
         AboutCommand = new RelayCommand(_ => ShowAbout());
         InstructionCommand = new RelayCommand(_ => ShowInstruction());
+        UpdateCommand = new RelayCommand(_ => ShowUpdate());
         SelectAmbiguousFileCommand = new RelayCommand(SelectAmbiguousFile, CanSelectAmbiguousFile);
         SelectFileManuallyCommand = new RelayCommand(SelectFileManually);
         UndoCommand = new RelayCommand(_ => Undo(), _ => CanUndo);
@@ -331,6 +333,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
             "7. Нажмите Собрать PDF";
 
         var wnd = new NSPdfMerge.App.InstructionWindow(text)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+        wnd.ShowDialog();
+    }
+
+    private void ShowUpdate()
+    {
+        var wnd = new NSPdfMerge.App.UpdateWindow()
         {
             Owner = System.Windows.Application.Current.MainWindow
         };

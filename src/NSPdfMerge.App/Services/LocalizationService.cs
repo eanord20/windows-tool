@@ -67,7 +67,17 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["StatusResult"] = "Результат",
             ["StatusOpen"] = "Открыть",
             ["ButtonOk"] = "OK",
-            ["WindowTitle"] = "NS PDF Merge"
+            ["WindowTitle"] = "NS PDF Merge",
+            ["MenuUpdate"] = "Обновление",
+            ["UpdateWindowTitle"] = "Обновление",
+            ["UpdateCurrentVersion"] = "Текущая версия:",
+            ["UpdateLatestVersion"] = "Последняя версия:",
+            ["UpdateChangelogHeader"] = "Что нового",
+            ["ButtonCheckUpdate"] = "Проверить обновление",
+            ["ButtonUpdate"] = "Обновить",
+            ["UpdateUpToDate"] = "У вас установлена актуальная версия.",
+            ["UpdateAvailable"] = "Доступна новая версия:",
+            ["UpdateErrorPrefix"] = "Ошибка:"
         },
         ["en"] = new()
         {
@@ -123,7 +133,17 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["StatusResult"] = "Result",
             ["StatusOpen"] = "Open",
             ["ButtonOk"] = "OK",
-            ["WindowTitle"] = "NS PDF Merge"
+            ["WindowTitle"] = "NS PDF Merge",
+            ["MenuUpdate"] = "Update",
+            ["UpdateWindowTitle"] = "Update",
+            ["UpdateCurrentVersion"] = "Current version:",
+            ["UpdateLatestVersion"] = "Latest version:",
+            ["UpdateChangelogHeader"] = "What's new",
+            ["ButtonCheckUpdate"] = "Check for updates",
+            ["ButtonUpdate"] = "Update",
+            ["UpdateUpToDate"] = "You have the latest version.",
+            ["UpdateAvailable"] = "New version available:",
+            ["UpdateErrorPrefix"] = "Error:"
         },
         ["uk"] = new()
         {
@@ -179,7 +199,17 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["StatusResult"] = "Результат",
             ["StatusOpen"] = "Відкрити",
             ["ButtonOk"] = "OK",
-            ["WindowTitle"] = "NS PDF Merge"
+            ["WindowTitle"] = "NS PDF Merge",
+            ["MenuUpdate"] = "Оновлення",
+            ["UpdateWindowTitle"] = "Оновлення",
+            ["UpdateCurrentVersion"] = "Поточна версія:",
+            ["UpdateLatestVersion"] = "Остання версія:",
+            ["UpdateChangelogHeader"] = "Що нового",
+            ["ButtonCheckUpdate"] = "Перевірити оновлення",
+            ["ButtonUpdate"] = "Оновити",
+            ["UpdateUpToDate"] = "У вас встановлена актуальна версія.",
+            ["UpdateAvailable"] = "Доступна нова версія:",
+            ["UpdateErrorPrefix"] = "Помилка:"
         }
     };
 
@@ -258,6 +288,16 @@ public sealed class LocalizationService : INotifyPropertyChanged
     public string StatusOpen => Get(nameof(StatusOpen));
     public string ButtonOk => Get(nameof(ButtonOk));
     public string WindowTitle => Get(nameof(WindowTitle));
+    public string MenuUpdate => Get(nameof(MenuUpdate));
+    public string UpdateWindowTitle => Get(nameof(UpdateWindowTitle));
+    public string UpdateCurrentVersion => Get(nameof(UpdateCurrentVersion));
+    public string UpdateLatestVersion => Get(nameof(UpdateLatestVersion));
+    public string UpdateChangelogHeader => Get(nameof(UpdateChangelogHeader));
+    public string ButtonCheckUpdate => Get(nameof(ButtonCheckUpdate));
+    public string ButtonUpdate => Get(nameof(ButtonUpdate));
+    public string UpdateUpToDate => Get(nameof(UpdateUpToDate));
+    public string UpdateAvailable => Get(nameof(UpdateAvailable));
+    public string UpdateErrorPrefix => Get(nameof(UpdateErrorPrefix));
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
