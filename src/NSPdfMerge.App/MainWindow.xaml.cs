@@ -22,7 +22,7 @@ public partial class MainWindow : Window
         _dragStartPoint = e.GetPosition(null);
 
         if (sender is not DataGrid dataGrid) return;
-        if (e.OriginalSource is System.Windows.Controls.TextBox) return;
+        if (IsInsideInteractiveControl((DependencyObject)e.OriginalSource)) return;
 
         var row = FindVisualParent<DataGridRow>((DependencyObject)e.OriginalSource);
         if (row?.Item is not FileRow rowData) return;
@@ -47,9 +47,9 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Do not initiate row drag if the user is selecting text inside a TextBox cell,
-        // resizing/reordering a column, or interacting with the column header.
-        if (e.OriginalSource is System.Windows.Controls.TextBox) return;
+        // Do not initiate row drag if the user is interacting with a cell editor, button, checkbox,
+        // or is outside a data row (column header, scrollbar, etc.).
+        if (IsInsideInteractiveControl((DependencyObject)e.OriginalSource)) return;
         if (FindVisualParent<DataGridRow>((DependencyObject)e.OriginalSource) is null) return;
 
         if (sender is not DataGrid dataGrid) return;
@@ -207,6 +207,13 @@ public partial class MainWindow : Window
 
         vm.SelectedRow = vm.Rows.LastOrDefault();
         vm.AppendLog($"Добавлено файлов из проводника: {pdfFiles.Count}\r\n");
+    }
+
+    private static bool IsInsideInteractiveControl(DependencyObject source)
+    {
+        return FindVisualParent<System.Windows.Controls.TextBox>(source) is not null
+            || FindVisualParent<System.Windows.Controls.Button>(source) is not null
+            || FindVisualParent<System.Windows.Controls.CheckBox>(source) is not null;
     }
 
     private static T? FindVisualParent<T>(DependencyObject child) where T : DependencyObject

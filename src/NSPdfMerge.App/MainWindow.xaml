@@ -24,6 +24,7 @@
         <conv:RowIndexConverter x:Key="RowIndexConverter" />
         <SolidColorBrush x:Key="NotFoundRowBrush" Color="#F7C7AC" />
         <SolidColorBrush x:Key="DuplicateRowBrush" Color="#FFF7DC" />
+        <SolidColorBrush x:Key="AmbiguousRowBrush" Color="#C3E0E5" />
         <SolidColorBrush x:Key="DuplicateBadgeBackground" Color="#FFF7DC" />
         <SolidColorBrush x:Key="DuplicateBadgeBorder" Color="#E0C080" />
 
@@ -360,8 +361,8 @@
                             <Setter Property="Padding" Value="4,1" />
                             <Setter Property="FontSize" Value="14" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsDuplicate}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DuplicateRowBrush}" />
+                                <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                    <Setter Property="Background" Value="{StaticResource AmbiguousRowBrush}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Status}" Value="NotFound">
                                     <Setter Property="Background" Value="{StaticResource NotFoundRowBrush}" />
@@ -387,8 +388,8 @@
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsDuplicate}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DuplicateRowBrush}" />
+                                <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                    <Setter Property="Background" Value="{StaticResource AmbiguousRowBrush}" />
                                     <Setter Property="Foreground" Value="Black" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Status}" Value="NotFound">
@@ -450,7 +451,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnStatus}" Width="70" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ColumnStatus}" Width="80" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <DockPanel LastChildFill="False">

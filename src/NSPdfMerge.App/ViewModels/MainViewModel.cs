@@ -83,7 +83,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
             return;
         }
 
-        var wnd = new NSPdfMerge.App.AmbiguousSelectWindow(candidates);
+        var wnd = new NSPdfMerge.App.AmbiguousSelectWindow(candidates)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
         var ok = wnd.ShowDialog();
         if (ok != true) return;
 
