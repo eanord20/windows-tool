@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:NSPdfMerge.App.ViewModels"
         xmlns:conv="clr-namespace:NSPdfMerge.App.Converters"
         xmlns:loc="clr-namespace:NSPdfMerge.App.Services"
+        xmlns:models="clr-namespace:NSPdfMerge.App.Models"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=WindowTitle}" Height="720" Width="1200" WindowState="Maximized">
@@ -361,10 +362,10 @@
                             <Setter Property="Padding" Value="4,1" />
                             <Setter Property="FontSize" Value="14" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.Ambiguous}">
                                     <Setter Property="Background" Value="{StaticResource AmbiguousRowBrush}" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Status}" Value="NotFound">
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.NotFound}">
                                     <Setter Property="Background" Value="{StaticResource NotFoundRowBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -388,11 +389,11 @@
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.Ambiguous}">
                                     <Setter Property="Background" Value="{StaticResource AmbiguousRowBrush}" />
                                     <Setter Property="Foreground" Value="Black" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Status}" Value="NotFound">
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.NotFound}">
                                     <Setter Property="Background" Value="{StaticResource NotFoundRowBrush}" />
                                     <Setter Property="Foreground" Value="Black" />
                                 </DataTrigger>
@@ -459,15 +460,18 @@
                                             <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TableForegroundBrush}" />
                                         </Border>
                                         <Button DockPanel.Dock="Right"
-                                                Margin="8,0,0,0"
-                                                Content="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}"
-                                                Click="AmbiguousButton_Click">
+                                                Margin="4,0,0,0"
+                                                Width="24"
+                                                ToolTip="{Binding Source={x:Static loc:LocalizationService.Instance}, Path=ButtonBrowse}"
+                                                Click="AmbiguousButton_Click"
+                                                Loaded="AmbiguousButton_Loaded">
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource SmallOutlinedButton}">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                     <Setter Property="IsEnabled" Value="True" />
+                                                    <Setter Property="Padding" Value="2" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Ambiguous">
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.Ambiguous}">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding CandidatesCount}" Value="0">
@@ -476,6 +480,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
+                                            <materialDesign:PackIcon Kind="FolderOpen" Width="16" Height="16" />
                                         </Button>
                                     </DockPanel>
                                 </DataTemplate>

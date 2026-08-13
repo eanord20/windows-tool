@@ -236,6 +236,14 @@ public partial class MainWindow : Window
         }
     }
 
+    private void AmbiguousButton_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button button) return;
+        if (button.DataContext is not FileRow row) return;
+
+        AppLog.Info($"Ambiguous button loaded: RowNumber={row.RowNumber}, Number={row.Number}, Status={row.Status}, CandidatesCount={row.CandidatesCount}, Visibility={button.Visibility}, IsEnabled={button.IsEnabled}");
+    }
+
     private static bool IsInsideInteractiveControl(DependencyObject source)
     {
         return FindVisualParent<System.Windows.Controls.TextBox>(source) is not null
