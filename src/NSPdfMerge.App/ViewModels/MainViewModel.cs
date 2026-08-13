@@ -305,31 +305,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private void ShowAbout()
     {
         var year = DateTime.Now.Year;
-        var changelog =
-            "Что нового в версии 1.2.0:\r\n" +
-            "• Меню единого стиля: равная высота и ширина выпадающих списков\r\n" +
-            "• Пресеты разделены на поиск и сохранение, размещены в меню Файл\r\n" +
-            "• Пресеты хранятся в отдельном presets.json и редактируются через Файл → Редактировать пресеты\r\n" +
-            "• Имя пресета по умолчанию берётся из полного пути\r\n" +
-            "• Текст таблицы в тёмной теме вынесен в #F0F0F0, бейдж Дубль — тёмный на жёлтом\r\n" +
-            "• Компактный верхний блок и меню\r\n" +
-            "• Подсветка строк NotFound (#F7C7AC) и дубликатов (#FFF7DC)\r\n" +
-            "• Excel-подобное выделение текста и копирование ячеек\r\n" +
-            "• Сохранение ручного выбора файла при сборке PDF\r\n" +
-            "• Отмена последнего действия (Ctrl+Z)\r\n" +
-            "• Множественное перетаскивание строк\r\n" +
-            "• Строка состояния с путём к собранному PDF\r\n" +
-            "• Кнопка «Открыть» в верхней панели\r\n" +
-            "• Удаление дублей с конца списка\r\n" +
-            "• Порядковый номер строки (№) в таблице\r\n" +
-            "• Локализация интерфейса (RU / EN / UK)\r\n";
-
         var text = $"{AppName} v{AppVersion}\r\n\r\n" +
                    $"Author: {AuthorName}\r\n" +
                    $"Contact:\r\n{ContactEmail}\r\n\r\n" +
                    $"{AppName} is a lightweight tool designed to merge multiple PDF files into a single document.\r\n" +
                    $"It is optimized for handling documentation, and large-format PDFs while preserving original quality and structure.\r\n\r\n" +
-                   $"{changelog}\r\n" +
                    $"© {year} {AuthorName}. All rights reserved. The program is free.";
 
         var wnd = new NSPdfMerge.App.AboutWindow(text)
