@@ -44,3 +44,6 @@ ChatGPT*.png
 
 # Local scratch / notes
 *.txt
+
+# Git worktrees
+.worktrees/
