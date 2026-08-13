@@ -456,7 +456,17 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <DockPanel LastChildFill="False">
-                                        <Border DockPanel.Dock="Left" CornerRadius="10" Padding="8,2" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" ToolTip="{Binding ResolvedPath}">
+                                        <Border DockPanel.Dock="Left" CornerRadius="10" Padding="8,2" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" ToolTip="{Binding ResolvedPath}" MouseLeftButtonUp="AmbiguousStatusBorder_MouseLeftButtonUp">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ResolveStatus.Ambiguous}">
+                                                            <Setter Property="Cursor" Value="Hand" />
+                                                            <Setter Property="ToolTip" Value="Нажмите, чтобы выбрать файл из нескольких вариантов" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TableForegroundBrush}" />
                                         </Border>
                                         <Button DockPanel.Dock="Right"

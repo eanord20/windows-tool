@@ -236,6 +236,30 @@ public partial class MainWindow : Window
         }
     }
 
+    private void AmbiguousStatusBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not Border border) return;
+        if (border.DataContext is not FileRow row) return;
+        if (DataContext is not MainViewModel vm) return;
+
+        if (row.Status != ResolveStatus.Ambiguous)
+        {
+            return;
+        }
+
+        AppLog.Info($"Ambiguous status badge clicked: RowNumber={row.RowNumber}, Number={row.Number}, CandidatesCount={row.CandidatesCount}");
+
+        if (vm.SelectAmbiguousFileCommand.CanExecute(row))
+        {
+            vm.SelectAmbiguousFileCommand.Execute(row);
+            AppLog.Info("SelectAmbiguousFileCommand executed from status badge");
+        }
+        else
+        {
+            AppLog.Info($"SelectAmbiguousFileCommand cannot execute for row {row.RowNumber}");
+        }
+    }
+
     private void AmbiguousButton_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is not System.Windows.Controls.Button button) return;
