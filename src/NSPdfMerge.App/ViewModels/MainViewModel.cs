@@ -332,7 +332,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
                    $"{changelog}\r\n" +
                    $"© {year} {AuthorName}. All rights reserved. The program is free.";
 
-        var wnd = new NSPdfMerge.App.AboutWindow(text);
+        var wnd = new NSPdfMerge.App.AboutWindow(text)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
         wnd.ShowDialog();
     }
 
@@ -347,7 +350,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
             "6. Нажмите Найти файлы\r\n" +
             "7. Нажмите Собрать PDF";
 
-        var wnd = new NSPdfMerge.App.InstructionWindow(text);
+        var wnd = new NSPdfMerge.App.InstructionWindow(text)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
         wnd.ShowDialog();
     }
 
