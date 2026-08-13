@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -27,13 +28,22 @@ public sealed class UpdateService : IDisposable
     public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken = default)
     {
         var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 0, 0, 0);
-        var response = await _httpClient.GetAsync(
-            $"https://api.github.com/repos/{Owner}/{Repo}/releases/latest",
-            cancellationToken);
-        response.EnsureSuccessStatusCode();
+        GitHubRelease release;
 
-        var release = await response.Content.ReadFromJsonAsync<GitHubRelease>(cancellationToken)
+        try
+        {
+            var response = await _httpClient.GetAsync(
+                $"https://api.github.com/repos/{Owner}/{Repo}/releases/latest",
+                cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            release = await response.Content.ReadFromJsonAsync<GitHubRelease>(cancellationToken)
                       ?? throw new InvalidOperationException("GitHub returned empty release data.");
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return new UpdateCheckResult { HasRelease = false };
+        }
 
         var tagVersion = ParseVersion(release.TagName);
         var asset = release.Assets?.FirstOrDefault(a => a.Name.Equals(AssetName, StringComparison.OrdinalIgnoreCase));
@@ -98,7 +108,7 @@ public sealed class UpdateService : IDisposable
 
     public void Dispose() => _httpClient.Dispose();
 
-    private sealed class GitHubRelease
+    public sealed class GitHubRelease
     {
         [JsonPropertyName("tag_name")]
         public string TagName { get; set; } = string.Empty;
@@ -110,7 +120,7 @@ public sealed class UpdateService : IDisposable
         public List<GitHubAsset>? Assets { get; set; }
     }
 
-    private sealed class GitHubAsset
+    public sealed class GitHubAsset
     {
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
@@ -122,6 +132,7 @@ public sealed class UpdateService : IDisposable
 
 public sealed class UpdateCheckResult
 {
+    public bool HasRelease { get; init; } = true;
     public bool IsUpdateAvailable { get; init; }
     public Version? LatestVersion { get; init; }
     public string DownloadUrl { get; init; } = string.Empty;

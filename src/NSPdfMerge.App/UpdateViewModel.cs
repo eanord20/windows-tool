@@ -79,9 +79,11 @@ public sealed class UpdateViewModel : INotifyPropertyChanged
             var result = await _updateService.CheckForUpdateAsync();
             LatestVersion = result.LatestVersion?.ToString() ?? "—";
             IsUpdateAvailable = result.IsUpdateAvailable;
-            StatusText = result.IsUpdateAvailable
-                ? $"{LocalizationService.Instance.Get("UpdateAvailable")} {LatestVersion}"
-                : LocalizationService.Instance.Get("UpdateUpToDate");
+            StatusText = result.HasRelease
+                ? result.IsUpdateAvailable
+                    ? $"{LocalizationService.Instance.Get("UpdateAvailable")} {LatestVersion}"
+                    : LocalizationService.Instance.Get("UpdateUpToDate")
+                : LocalizationService.Instance.Get("UpdateNoRelease");
         }
         catch (Exception ex)
         {

@@ -77,7 +77,8 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["ButtonUpdate"] = "Обновить",
             ["UpdateUpToDate"] = "У вас установлена актуальная версия.",
             ["UpdateAvailable"] = "Доступна новая версия:",
-            ["UpdateErrorPrefix"] = "Ошибка:"
+            ["UpdateErrorPrefix"] = "Ошибка:",
+            ["UpdateNoRelease"] = "Нет опубликованных релизов."
         },
         ["en"] = new()
         {
@@ -143,7 +144,8 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["ButtonUpdate"] = "Update",
             ["UpdateUpToDate"] = "You have the latest version.",
             ["UpdateAvailable"] = "New version available:",
-            ["UpdateErrorPrefix"] = "Error:"
+            ["UpdateErrorPrefix"] = "Error:",
+            ["UpdateNoRelease"] = "No published releases found."
         },
         ["uk"] = new()
         {
@@ -209,7 +211,8 @@ public sealed class LocalizationService : INotifyPropertyChanged
             ["ButtonUpdate"] = "Оновити",
             ["UpdateUpToDate"] = "У вас встановлена актуальна версія.",
             ["UpdateAvailable"] = "Доступна нова версія:",
-            ["UpdateErrorPrefix"] = "Помилка:"
+            ["UpdateErrorPrefix"] = "Помилка:",
+            ["UpdateNoRelease"] = "Немає опублікованих релізів."
         }
     };
 
@@ -298,6 +301,7 @@ public sealed class LocalizationService : INotifyPropertyChanged
     public string UpdateUpToDate => Get(nameof(UpdateUpToDate));
     public string UpdateAvailable => Get(nameof(UpdateAvailable));
     public string UpdateErrorPrefix => Get(nameof(UpdateErrorPrefix));
+    public string UpdateNoRelease => Get(nameof(UpdateNoRelease));
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
