@@ -323,14 +323,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private void ShowInstruction()
     {
-        var text =
-            "1. Скопируйте из Эксель Номер и название документа, можно только номер или название.\r\n" +
-            "2. Для вставки из буфера нажмите кнопку - Вставить из буфера\r\n" +
-            "3. При вставке Эксель файла строки столбца Номер заполняются вторым столбцом из файла, Название - третим.\r\n" +
-            "4. Выберите путь поиска файлов\r\n" +
-            "5. Выберите путь сохранения файлов\r\n" +
-            "6. Нажмите Найти файлы\r\n" +
-            "7. Нажмите Собрать PDF";
+        var text = LocalizationService.Instance.InstructionText;
 
         var wnd = new NSPdfMerge.App.InstructionWindow(text)
         {
