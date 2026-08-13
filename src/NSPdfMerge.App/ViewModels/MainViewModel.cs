@@ -946,12 +946,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
     {
         try
         {
+            AppLog.Info($"ResolveFiles started. SearchPath='{CommonSearchPath}', Rows={Rows.Count}");
             var report = _fileResolveService.ResolveAll(Rows, CommonSearchPath);
+            AppLog.Info("ResolveFiles completed");
             AppendLog(report);
             RaiseCountersChanged();
         }
         catch (Exception ex)
         {
+            AppLog.Error("ResolveFiles failed", ex);
             System.Windows.MessageBox.Show(ex.Message, "Ошибка поиска", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
     }

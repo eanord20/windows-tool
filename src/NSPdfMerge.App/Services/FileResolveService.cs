@@ -61,6 +61,7 @@ public sealed class FileResolveService
         {
             row.Status = ResolveStatus.NotFound;
             row.ResolvedPath = string.Empty;
+            AppLog.Info($"[{row.Number}] NotFound: {row.Number} {row.Title}");
             log.AppendLine($"[{row.Number}] Не найдено: {row.Number} {row.Title}");
             return;
         }
@@ -70,11 +71,13 @@ public sealed class FileResolveService
             row.Status = ResolveStatus.Found;
             row.ResolvedPath = candidates[0];
             row.Candidates = [];
+            AppLog.Info($"[{row.Number}] Found: {candidates[0]}");
             return;
         }
 
         row.Status = ResolveStatus.Ambiguous;
         row.ResolvedPath = string.Empty;
+        AppLog.Info($"[{row.Number}] Ambiguous: {candidates.Count} candidates");
         log.AppendLine($"[{row.Number}] Несколько совпадений: {candidates.Count}");
     }
 
